@@ -341,7 +341,24 @@ const employeeManager =  () => {
       }); 
   });
 }
-
+// function to view dep table, role, and employee table
+const seeEvery = (table) => {
+  let query;
+  if (table === "DEPARTMENT") {
+    query = `SELECT * FROM DEPARTMENT`;
+  } else if (table === "ROLE") {
+    query = `SELECT r.id AS id, title, salary, d.name AS department FROM ROLE AS r LEFT JOIN DEPARTMENT AS d ON r.department_id = d.id;`;
+  } else {
+    query = `SELECT e.id AS id, e.first_name AS first_name, e.last_name AS last_name, r.title AS role, d.name AS department, 
+    CONCAT(m.first_name, " ", m.last_name) AS manager FROM EMPLOYEE AS e LEFT JOIN ROLE AS r ON e.role_id = r.id
+    LEFT JOIN DEPARTMENT AS d ON r.department_id = d.id LEFT JOIN EMPLOYEE AS m ON e.manager_id = m.id;`;
+  }
+  connection.query(query, (err, res) => {
+    if (err) throw err;
+    console.table(res);
+    choiceSelection();
+  });
+};
 
 
 
