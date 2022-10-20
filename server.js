@@ -118,7 +118,52 @@ const departmentAdd = () => {
     console.error(err);
   });
 }
-
+    // added function to add new employee role
+    const roleAdd = () => {
+      const departments = [];
+      connection.query("SELECT * FROM DEPARTMENT", (err, res) => {
+        if (err) throw err;
+        res.forEach(dep => {
+          let depConst = {
+            name: dep.name,
+            value: dep.id
+          }
+          departments.push(depConst);
+        });
+    
+        let questionsArray = [
+          {
+            type: "input",
+            name: "title",
+            message: "Insert title of new role"
+          },
+          {
+            type: "input",
+            name: "salary",
+            message: "what is the salary of the new role?"
+          },
+          {
+            type: "list",
+            name: "department",
+            choices: departments,
+            message: "which department is this role in?"
+          }
+        ];
+    
+        inquier.prompt(questionsArray)
+        .then(response => {
+          const query = `INSERT INTO ROLE (title, salary, department_id) VALUES (?)`;
+          connection.query(query, [[response.title, response.salary, response.department]], (err, res) => {
+            if (err) throw err;
+            console.log(`Successfully inserted ${response.title}`);
+            choiceSelection();
+          });
+        })
+        .catch(err => {
+          console.error(err);
+        });
+      });
+    }
 
 
 
