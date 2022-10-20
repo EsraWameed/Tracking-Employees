@@ -232,6 +232,62 @@ const employeeAdd = () => {
     })
   });
 }
+// function to update employee role
+const roleUpdate = () => {
+  connection.query("SELECT * FROM EMPLOYEE", (err, resEmployee) => {
+    if (err) throw err;
+    const employeeSelection = [];
+    resEmployee.forEach(({ first_name, last_name, id }) => {
+      employeeSelection.push({
+        name: first_name + " " + last_name,
+        value: id
+      });
+    });
+    
+    connection.query("SELECT * FROM ROLE", (err, rolRes) => {
+      if (err) throw err;
+      const roleChoice = [];
+      rolRes.forEach(({ title, id }) => {
+        roleChoice.push({
+          name: title,
+          value: id
+          });
+        });
+     
+      let questionsArray = [
+        {
+          type: "list",
+          name: "id",
+          choices: employeeSelection,
+          message: "whose role do you want to update?"
+        },
+        {
+          type: "list",
+          name: "role_id",
+          choices: roleChoice,
+          message: "what is the employee's new role?"
+        }
+      ]
+  
+      inquier.prompt(questionsArray)
+        .then(response => {
+          const query = `UPDATE EMPLOYEE SET ? WHERE ?? = ?;`;
+          connection.query(query, [
+            {role_id: response.role_id},
+            "id",
+            response.id
+          ], (err, res) => {
+            if (err) throw err;
+            console.log("employee's role updated!");
+            choiceSelection();
+          });
+        })
+        .catch(err => {
+          console.error(err);
+        });
+      })
+  });
+}
 
 
 
