@@ -89,7 +89,12 @@ function choiceSelection() {
       default:
         connection.end();
     }
-
+// if there's an error, catch it
+})
+.catch(err => {
+  console.error(err);
+});
+}
 
 
 
