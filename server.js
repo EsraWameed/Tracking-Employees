@@ -360,6 +360,210 @@ const seeEvery = (table) => {
   });
 };
 
+//bonus functions
+const managerUpdate = ()=> {
+  connection.query("SELECT * FROM EMPLOYEE", (err, resEmployee) => {
+    if (err) throw err;
+    const employeeSelection = [];
+    resEmployee.forEach(({ first_name, last_name, id }) => {
+      employeeSelection.push({
+        name: first_name + " " + last_name,
+        value: id
+      });
+    });
+    
+    const managerSelection = [{
+      name: 'None',
+      value: 0
+    }]; 
+    resEmployee.forEach(({ first_name, last_name, id }) => {
+      managerSelection.push({
+        name: first_name + " " + last_name,
+        value: id
+      });
+    });
+     
+    let questionsArray = [
+      {
+        type: "list",
+        name: "id",
+        choices: employeeSelection,
+        message: "Who to update?"
+      },
+      {
+        type: "list",
+        name: "manager_id",
+        choices: managerSelection,
+        message: "To which manager do you want to assign employee?"
+      }
+    ]
+  
+    inquier.prompt(questionsArray)
+      .then(response => {
+        const query = `UPDATE EMPLOYEE SET ? WHERE id = ?;`;
+        let manager_id = response.manager_id !== 0? response.manager_id: null;
+        connection.query(query, [{manager_id: manager_id}, response.id], (err, res) => {
+          if (err) throw err;
+          console.log("successfully updated employee's manager");
+          choiceSelection();
+        });
+      })
+      .catch(err => {
+      console.error(err);
+      });
+  })
+};
+
+const depDelete = () => {
+  const departments = [];
+  connection.query("SELECT * FROM DEPARTMENT", (err, res) => {
+    if (err) throw err;
+    res.forEach(dep => {
+      let depConst = {
+        name: dep.name,
+        value: dep.id
+      }
+      departments.push(depConst);
+    });
+
+    let questionsArray = [
+      {
+        type: "list",
+        name: "id",
+        choices: departments,
+        message: "Select a department to delete"
+      }
+    ];
+
+    inquier.prompt(questionsArray)
+    .then(response => {
+      const query = `DELETE FROM DEPARTMENT WHERE id = ?`;
+      connection.query(query, [response.id], (err, res) => {
+        if (err) throw err;
+        console.log(`${res.affectedRows} rows deleted!`);
+        choiceSelection();
+      });
+    })
+    .catch(err => {
+      console.error(err);
+    });
+  });
+};
+
+const roleDelete = () => {
+  const departments = [];
+  connection.query("SELECT * FROM ROLE", (err, res) => {
+    if (err) throw err;
+
+    const roleChoice = [];
+    res.forEach(({ title, id }) => {
+      roleChoice.push({
+        name: title,
+        value: id
+      });
+    });
+
+    let questionsArray = [
+      {
+        type: "list",
+        name: "id",
+        choices: roleChoice,
+        message: "which role do u want to delete?"
+      }
+    ];
+
+    inquier.prompt(questionsArray)
+    .then(response => {
+      const query = `DELETE FROM ROLE WHERE id = ?`;
+      connection.query(query, [response.id], (err, res) => {
+        if (err) throw err;
+        console.log(`${res.affectedRows} row(s) successfully deleted!`);
+        choiceSelection();
+      });
+    })
+    .catch(err => {
+      console.error(err);
+    });
+  });
+};
+
+const employeeDelete = () => {
+  connection.query("SELECT * FROM EMPLOYEE", (err, res) => {
+    if (err) throw err;
+
+    const employeeSelection = [];
+    res.forEach(({ first_name, last_name, id }) => {
+      employeeSelection.push({
+        name: first_name + " " + last_name,
+        value: id
+      });
+    });
+
+    let questionsArray = [
+      {
+        type: "list",
+        name: "id",
+        choices: employeeSelection,
+        message: "which employee do u want to delete?"
+      }
+    ];
+
+    inquier.prompt(questionsArray)
+    .then(response => {
+      const query = `DELETE FROM EMPLOYEE WHERE id = ?`;
+      connection.query(query, [response.id], (err, res) => {
+        if (err) throw err;
+        console.log(`${res.affectedRows} row(s) successfully deleted!`);
+        choiceSelection();
+      });
+    })
+    .catch(err => {
+      console.error(err);
+    });
+  });
+};
+
+const seeBudget = () => {
+  connection.query("SELECT * FROM DEPARTMENT", (err, res) => {
+    if (err) throw err;
+
+    const depChoice = [];
+    res.forEach(({ name, id }) => {
+      depChoice.push({
+        name: name,
+        value: id
+      });
+    });
+
+    let questionsArray = [
+      {
+        type: "list",
+        name: "id",
+        choices: depChoice,
+        message: "which department's budget do you want to see?"
+      }
+    ];
+    inquier.prompt(questionsArray)
+    .then(response => {
+      const query = `SELECT D.name, SUM(salary) AS budget FROM
+      EMPLOYEE AS E LEFT JOIN ROLE AS R
+      ON E.role_id = R.id
+      LEFT JOIN DEPARTMENT AS D
+      ON R.department_id = D.id
+      WHERE D.id = ?`;
+      connection.query(query, [response.id], (err, res) => {
+        if (err) throw err;
+        console.table(res);
+        choiceSelection();
+      });
+    })
+    .catch(err => {
+      console.error(err);
+    });
+  });
+
+};
+
 
 
 
