@@ -288,6 +288,59 @@ const roleUpdate = () => {
       })
   });
 }
+// role update function
+const employeeManager =  () => {
+  connection.query("SELECT * FROM EMPLOYEE", (err, resEmployee) => {
+    if (err) throw err;
+    const employeeSelection = [{
+      name: 'None',
+      value: 0
+    }];
+    resEmployee.forEach(({ first_name, last_name, id }) => {
+      employeeSelection.push({
+        name: first_name + " " + last_name,
+        value: id
+      });
+    });
+     
+    let questionsArray = [
+      {
+        type: "list",
+        name: "manager_id",
+        choices: employeeSelection,
+         message: "whose role do you want to update?"
+      },
+    ]
+    inquier.prompt(questionsArray)
+      .then(response => {
+        let manager_id, query;
+        if (response.manager_id) {
+          query = `SELECT e.id AS id, e.first_name AS first_name, e.last_name AS last_name, 
+          r.title AS role, d.name AS department, CONCAT(m.first_name, " ", m.last_name) AS manager
+          FROM EMPLOYEE AS e LEFT JOIN ROLE AS r ON e.role_id = r.id
+          LEFT JOIN DEPARTMENT AS d ON r.department_id = d.id
+          LEFT JOIN EMPLOYEE AS m ON e.manager_id = m.id
+          WHERE e.manager_id = ?;`;
+        } else {
+          manager_id = null;
+          query = `SELECT e.id AS id, e.first_name AS first_name, e.last_name AS last_name, 
+          r.title AS role, d.name AS department, CONCAT(m.first_name, " ", m.last_name) AS manager
+          FROM EMPLOYEE AS E LEFT JOIN ROLE AS R ON E.role_id = R.id
+          LEFT JOIN DEPARTMENT AS d ON r.department_id = d.id
+          LEFT JOIN EMPLOYEE AS m ON e.manager_id = m.id
+          WHERE e.manager_id is null;`;
+        }
+        connection.query(query, [response.manager_id], (err, res) => {
+          if (err) throw err;
+          console.table(res);
+          choiceSelection();
+        });
+      })
+      .catch(err => {
+        console.error(err);
+      }); 
+  });
+}
 
 
 
