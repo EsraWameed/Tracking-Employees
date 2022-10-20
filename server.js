@@ -404,7 +404,7 @@ const managerUpdate = ()=> {
         let manager_id = response.manager_id !== 0? response.manager_id: null;
         connection.query(query, [{manager_id: manager_id}, response.id], (err, res) => {
           if (err) throw err;
-          console.log("successfully updated employee's manager");
+          console.log("updated employee's manager");
           choiceSelection();
         });
       })
@@ -477,7 +477,7 @@ const roleDelete = () => {
       const query = `DELETE FROM ROLE WHERE id = ?`;
       connection.query(query, [response.id], (err, res) => {
         if (err) throw err;
-        console.log(`${res.affectedRows} row(s) successfully deleted!`);
+        console.log(`${res.affectedRows} rows deleted!`);
         choiceSelection();
       });
     })
@@ -513,7 +513,7 @@ const employeeDelete = () => {
       const query = `DELETE FROM EMPLOYEE WHERE id = ?`;
       connection.query(query, [response.id], (err, res) => {
         if (err) throw err;
-        console.log(`${res.affectedRows} row(s) successfully deleted!`);
+        console.log(`${res.affectedRows} rows deleted!`);
         choiceSelection();
       });
     })
