@@ -1,10 +1,11 @@
+//required dependencies
 const express = require('express');
 const mysql = require('mysql2');
 const inquier = require('inquirer');
 const cTable = require('console.table');
 const figlet = require('figlet');
 require('dotenv').config();
-
+//port in use
 const PORT = process.env.PORT || 3001;
 const app = express();
 
