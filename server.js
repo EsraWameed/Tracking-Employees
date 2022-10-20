@@ -95,6 +95,29 @@ function choiceSelection() {
   console.error(err);
 });
 }
+//function to allow for a new department to be added 
+const departmentAdd = () => {
+  let questionsArray = [
+    {
+      type: "input",
+      name: "name",
+      message: "New department name?"
+    }
+  ];
+  inquier.prompt(questionsArray)
+  .then(response => {
+    const query = `INSERT INTO department (name) VALUES (?)`;
+    connection.query(query, [response.name], (err, res) => {
+      if (err) throw err;
+      console.log(`${response.name} department inserted`);
+      //call choiceSelection() again to allow for new action selection
+      choiceSelection();
+    });
+  })
+  .catch(err => {
+    console.error(err);
+  });
+}
 
 
 
