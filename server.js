@@ -15,9 +15,82 @@ app.use(express.json());
 const connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',
-  password: Pass_DB,
+  password: process.env.Pass_DB,
   database: 'employeeTrack_DB',
 });
+//allow for connection to employeeTrack DB
+connection.connect((err) => {
+  if (err) throw err;
+  console.log(`connected to ${PORT}`);
+//add figlet to customize text
+figlet.text('Employee Tracker', {
+  font: 'puffy',
+}, function(err, data) {
+  if (err) {
+    console.log('figlet not working');
+  } else {
+    console.log(data);
+  }  
+  choiceSelection();
+});
+});
+//create function to allow for user selection of what to do
+function choiceSelection() {
+  const promptOne = [{
+    type: "list",
+    name: "choiceArray",
+    message: "what would you like to do?",
+    loop: false,
+    choices: ["View all employees", "View all roles", "View all departments", "add an employee", "add a role", "add a department", "update role for an employee", "update employee's manager", "view employees by manager", "delete a department", "delete a role", "delete an employee", "View the total utilized budget of a department", "quit"]
+  }]
+  
+  inquier.prompt(promptOne)
+  .then(response => {
+    switch (response.choiceArray) {
+      case "View all employees":
+        seeEvery("EMPLOYEE");
+        break;
+      case "View all roles":
+        seeEvery("ROLE");
+        break;
+      case "View all departments":
+        seeEvery("DEPARTMENT");
+        break;
+      case "add a department":
+        departmentAdd();
+        break;
+      case "add a role":
+        roleAdd();
+        break;
+      case "add an employee":
+        employeeAdd();
+        break;
+      case "update role for an employee":
+        roleUpdate();
+        break;
+      case "view employees by manager":
+        employeeManager();
+        break;
+      case "update employee's manager":
+        managerUpdate();
+        break;
+      case "delete a department":
+        depDelete();
+        break;
+      case "delete a role":
+        roleDelete();
+        break;
+      case "delete an employee":
+        employeeDelete();
+        break;
+      case "View the total utilized budget of a department":
+        seeBudget();
+        break;
+      default:
+        connection.end();
+    }
+
+
 
 
 
